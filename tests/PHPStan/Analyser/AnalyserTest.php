@@ -52,6 +52,24 @@ class AnalyserTest extends PHPStanTestCase
 		], $result);
 	}
 
+	public function testIgnoreNewErrors(): void
+	{
+		$result = $this->runAnalyser(['#Fail\.#'], false, __DIR__ . '/data/bootstrap-error.php', false, true, true);
+
+		$this->assertInstanceOf(Error::class, $result[0]);
+		$this->assertStringContainsString('Fail', $result[0]->getMessage());
+		$this->assertCount(1, $result);
+	}
+
+	public function testNewErrorsReportUnmatched(): void
+	{
+		$result = $this->runAnalyser(['#Unknown error#'], true, __DIR__ . '/data/empty/empty.php', false, true, true);
+
+		$this->assertSame([
+			'Ignored error pattern #Unknown error# was not matched in reported errors.',
+		], $result);
+	}
+
 	public function testDoNotReturnErrorIfIgnoredMessagesDoesNotOccurWithReportUnmatchedIgnoredErrorsOff(): void
 	{
 		$result = $this->runAnalyser(['#Unknown error#'], false, __DIR__ . '/data/empty/empty.php', false);
@@ -644,6 +662,8 @@ class AnalyserTest extends PHPStanTestCase
 		bool $reportUnmatchedIgnoredErrors,
 		$filePaths,
 		bool $onlyFiles,
+		bool $ignoreNewErrors = false,
+		bool $reportIgnoredErrors = false,
 	): array
 	{
 		$analyser = $this->createAnalyser();
@@ -656,6 +676,7 @@ class AnalyserTest extends PHPStanTestCase
 			$this->getFileHelper(),
 			$ignoreErrors,
 			$reportUnmatchedIgnoredErrors,
+			$ignoreNewErrors,
 		);
 		$ignoredErrorHelperResult = $ignoredErrorHelper->initialize();
 		if (count($ignoredErrorHelperResult->getErrors()) > 0) {
@@ -682,6 +703,10 @@ class AnalyserTest extends PHPStanTestCase
 		$ignoredErrorHelperProcessedResult = $ignoredErrorHelperResult->process($analyserResult->getErrors(), $onlyFiles, $normalizedFilePaths, $analyserResult->hasReachedInternalErrorsCountLimit());
 		$errors = $ignoredErrorHelperProcessedResult->getNotIgnoredErrors();
 		$errors = array_merge($errors, $ignoredErrorHelperProcessedResult->getOtherIgnoreMessages());
+		if ($reportIgnoredErrors) {
+			$ignoredErrors = array_map(static fn (array $ignoredErrorArray) => $ignoredErrorArray[0], $ignoredErrorHelperProcessedResult->getIgnoredErrors());
+			$errors = array_merge($errors, $ignoredErrors);
+		}
 		if ($analyserResult->hasReachedInternalErrorsCountLimit()) {
 			$errors[] = sprintf('Reached internal errors count limit of %d, exiting...', 50);
 		}

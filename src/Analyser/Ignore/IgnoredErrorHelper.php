@@ -22,6 +22,7 @@ final class IgnoredErrorHelper
 		private FileHelper $fileHelper,
 		private array $ignoreErrors,
 		private bool $reportUnmatchedIgnoredErrors,
+		private bool $ignoreNewErrors,
 	)
 	{
 	}
@@ -128,7 +129,7 @@ final class IgnoredErrorHelper
 			}
 		}
 
-		return new IgnoredErrorHelperResult($this->fileHelper, $errors, $otherIgnoreErrors, $ignoreErrorsByFile, $expandedIgnoreErrors, $this->reportUnmatchedIgnoredErrors);
+		return new IgnoredErrorHelperResult($this->fileHelper, $errors, $otherIgnoreErrors, $ignoreErrorsByFile, $expandedIgnoreErrors, $this->reportUnmatchedIgnoredErrors, $this->ignoreNewErrors);
 	}
 
 }

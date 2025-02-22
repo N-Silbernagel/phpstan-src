@@ -29,6 +29,7 @@ final class IgnoredErrorHelperResult
 		private array $ignoreErrorsByFile,
 		private array $ignoreErrors,
 		private bool $reportUnmatchedIgnoredErrors,
+		private bool $ignoreNewErrors,
 	)
 	{
 	}
@@ -169,7 +170,7 @@ final class IgnoredErrorHelperResult
 			}
 		}
 
-		$errors = array_values($errors);
+		$errors = $this->ignoreNewErrors ? [] : array_values($errors);
 
 		foreach ($unmatchedIgnoredErrors as $unmatchedIgnoredError) {
 			if (!isset($unmatchedIgnoredError['count']) || !isset($unmatchedIgnoredError['realCount'])) {

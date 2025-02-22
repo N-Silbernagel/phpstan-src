@@ -93,6 +93,7 @@ parameters:
 	cache:
 		nodesByStringCountMax: 256
 	reportUnmatchedIgnoredErrors: true
+	ignoreNewErrors: false
 	typeAliases: []
 	universalObjectCratesClasses:
 		- stdClass
@@ -456,6 +457,7 @@ services:
 		arguments:
 			ignoreErrors: %ignoreErrors%
 			reportUnmatchedIgnoredErrors: %reportUnmatchedIgnoredErrors%
+			ignoreNewErrors: %ignoreNewErrors%
 
 	-
 		class: PHPStan\Analyser\Ignore\IgnoreLexer

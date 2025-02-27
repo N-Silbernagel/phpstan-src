@@ -173,7 +173,7 @@ final class IgnoredErrorHelperResult
 		$errors = $this->ignoreNewErrors ? [] : array_values($errors);
 
 		foreach ($unmatchedIgnoredErrors as $unmatchedIgnoredError) {
-			if (!isset($unmatchedIgnoredError['count']) || !isset($unmatchedIgnoredError['realCount'])) {
+			if ($this->ignoreNewErrors || !isset($unmatchedIgnoredError['count']) || !isset($unmatchedIgnoredError['realCount'])) {
 				continue;
 			}
 

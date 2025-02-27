@@ -237,6 +237,8 @@ final class IgnoredErrorHelperResult
 			}
 		}
 
+		var_dump($errors);
+
 		return new IgnoredErrorHelperProcessedResult($errors, $ignoredErrors, $stringErrors);
 	}
 
